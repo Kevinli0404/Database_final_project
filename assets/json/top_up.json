@@ -1,0 +1,51 @@
+[
+    {
+      "top_up_id": "001",
+      "top_up_image": "assets/logo/gen_stone.png",
+      "TWD": "30.00",
+      "ticket": "52"
+    },
+    {
+      "top_up_id": "002",
+      "top_up_image": "assets/logo/gen_stone.png",
+      "TWD": "50.00",
+      "ticket": "88"
+    },
+    {
+      "top_up_id": "003",
+      "top_up_image": "assets/logo/gen_stone.png",
+      "TWD": "90.00",
+      "ticket": "158"
+    },
+    {
+      "top_up_id": "004",
+      "top_up_image": "assets/logo/gen_stone.png",
+      "TWD": "150.00",
+      "ticket": "264"
+    },
+    {
+      "top_up_id": "005",
+      "top_up_image": "assets/logo/gen_stone.png",
+      "TWD": "300.00",
+      "ticket": "528"
+    },
+    {
+      "top_up_id": "006",
+      "top_up_image": "assets/logo/gen_stone.png",
+      "TWD": "350.00",
+      "ticket": "616"
+    },
+    {
+      "top_up_id": "007",
+      "top_up_image": "assets/logo/gen_stone.png",
+      "TWD": "400.00",
+      "ticket": "74"
+    },
+    {
+      "top_up_id": "008",
+      "top_up_image": "assets/logo/gen_stone.png",
+      "TWD": "450.00",
+      "ticket": "792"
+    }
+  ]
+  

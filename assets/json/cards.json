@@ -1,0 +1,74 @@
+[
+    {
+      "card_id": "011",
+      "card_image": "assets/character_pictures/11.png",
+      "card_name": "Card 11",
+      "card_rarity": "1",
+      "card_description": "This is card 11"
+    },
+    {
+      "card_id": "012",
+      "card_image": "assets/character_pictures/12.png",
+      "card_name": "Card 12",
+      "card_rarity": "2",
+      "card_description": "This is card 12"
+    },
+    {
+      "card_id": "013",
+      "card_image": "assets/character_pictures/13.png",
+      "card_name": "Card 13",
+      "card_rarity": "3",
+      "card_description": "This is card 13"
+    },
+    {
+      "card_id": "014",
+      "card_image": "assets/character_pictures/14.png",
+      "card_name": "Card 14",
+      "card_rarity": "5",
+      "card_description": "This is card 14"
+    },
+    {
+      "card_id": "015",
+      "card_image": "assets/character_pictures/15.png",
+      "card_name": "Card 15",
+      "card_rarity": "2",
+      "card_description": "This is card 15"
+    },
+    {
+      "card_id": "012",
+      "card_image": "assets/character_pictures/12.png",
+      "card_name": "Card 12",
+      "card_rarity": "2",
+      "card_description": "This is card 12"
+    },
+    {
+      "card_id": "010",
+      "card_image": "assets/character_pictures/10.png",
+      "card_name": "Card 10",
+      "card_rarity": "5",
+      "card_description": "This is card 10"
+    },
+    {
+      "card_id": "011",
+      "card_image": "assets/character_pictures/11.png",
+      "card_name": "Card 11",
+      "card_rarity": "1",
+      "card_description": "This is card 11"
+    },
+    {
+      "card_id": "009",
+      "card_image": "assets/character_pictures/9.png",
+      "card_name": "Card 9",
+      "card_rarity": "5",
+      "card_description": "This is card 9"
+    }
+    ,
+    {
+      "card_id": "010",
+      "card_image": "assets/character_pictures/10.png",
+      "card_name": "Card 10",
+      "card_rarity": "5",
+      "card_description": "This is card 10"
+    }
+  ]
+  
