@@ -79,16 +79,20 @@ class CharacterPage extends StatelessWidget {
   Future<void> _handleCharacterTap(BuildContext context, ServerAPI serverAPI,
       UserCharacter character) async {
     try {
-      final handleCharacterTapresult =
+      final getCharacterListResult =
           await serverAPI.getCharacterList(character.characterId.toString());
-      if (handleCharacterTapresult == 'getCharacterList success') {
+      final getCardPoolResult = await serverAPI.getCardPool();
+      if (getCharacterListResult == 'getCharacterList success' &&
+          getCardPoolResult == 'getCardPool success') {
         // log('Character data fetched successfully.');
+        // log('serverAPI.cardPool');
+        // log('${serverAPI.cardPool}');
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => HomePage()),
         );
       } else {
         Fluttertoast.showToast(
-          msg: "加载角色失败：$handleCharacterTapresult",
+          msg: "加载角色失败：$getCharacterListResult",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           backgroundColor: Colors.red,

@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:database_final_project/class_data/character_data.dart';
 import 'package:database_final_project/class_data/user_character.dart';
 import 'package:database_final_project/class_data/obtain_card.dart';
+import 'package:database_final_project/class_data/card_pool_data.dart';
 
 // class ServerAPI
 class ServerAPI with ChangeNotifier {
@@ -23,6 +24,7 @@ class ServerAPI with ChangeNotifier {
   List<UserCharacter> _userCharacters = []; // 角色列表
   CharacterData? _characterData; // 用於存儲角色詳細資料
   List<ObtainCard> _backpackCards = []; // 用于存储背包数据
+  List<CardPoolData> _cardPool = []; // 存储 CardPool 数据
 
   // get port => _port;
 
@@ -33,21 +35,15 @@ class ServerAPI with ChangeNotifier {
   String get host => _host;
   String get hostIP => _hostIP;
   String get port => _port;
-
-  String get accessToken => _accessToken; // 獲取 token
-  int? get userId => _userId; // 獲取 user_id
-
-  // set setHost(String hostIP) => _hostIP = hostIP;
-  // late String _accessToken = '';
-
-  // get accessToken => _accessToken;
-
-  bool get isLogin => _accessToken.isNotEmpty;
+  String get accessToken => _accessToken;
+  int? get userId => _userId;
+  CharacterData? get characterData => _characterData;
 
   List<UserCharacter> get userCharacters => List.unmodifiable(_userCharacters);
-  CharacterData? get characterData => _characterData;
-  // Getter for backpack cards
   List<ObtainCard> get backpackCards => List.unmodifiable(_backpackCards);
+  List<CardPoolData> get cardPool => List.unmodifiable(_cardPool);
+
+  bool get isLogin => _accessToken.isNotEmpty;
 
   set setHost(String hostIP) {
     _hostIP = hostIP;
@@ -331,9 +327,9 @@ class ServerAPI with ChangeNotifier {
       log('getCardPool response = ${response.body}');
 
       if (respose["err"] == false && response.statusCode == 200) {
-        // 将 JSON 数据转换为 List<ObtainCard>
-        _backpackCards = (respose['obtain_card'] as List)
-            .map((item) => ObtainCard.fromJson(item))
+        // 将 JSON 数据转换为 List<CardPool>
+        _cardPool = (respose['card_pool'] as List)
+            .map((item) => CardPoolData.fromJson(item))
             .toList();
 
         notifyListeners(); // 通知 UI 数据已更新
@@ -342,10 +338,36 @@ class ServerAPI with ChangeNotifier {
         throw Exception(respose["err_msg"] ?? "Unknown error");
       }
     } catch (e) {
-      log('Error fetching backpack data: $e');
+      log('Error fetching card pool data: $e');
       rethrow;
     }
   }
+
+  // Future<String> getCardPool() async {
+  //   Uri hostUrl = Uri.http(_host, '/api/v1/get_card_pool');
+  //   try {
+  //     http.Response response = await http.post(
+  //       hostUrl,
+  //       body: {
+  //         "access_token": _accessToken,
+  //       },
+  //     );
+
+  //     // 将响应解码为 Map
+  //     Map<String, dynamic> respose = jsonDecode(response.body);
+
+  //     log('getCardPool response = ${response.body}');
+
+  //     if (respose["err"] == false && response.statusCode == 200) {
+  //       return 'getCardPool success';
+  //     } else {
+  //       throw Exception(respose["err_msg"] ?? "Unknown error");
+  //     }
+  //   } catch (e) {
+  //     log('Error fetching backpack data: $e');
+  //     rethrow;
+  //   }
+  // }
 }
 
 //裝置資料

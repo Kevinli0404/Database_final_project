@@ -13,7 +13,6 @@ class ObtainCard {
     required this.cardDescription,
   });
 
-  // 从 JSON 创建对象
   factory ObtainCard.fromJson(Map<String, dynamic> json) {
     return ObtainCard(
       cardId: json['card_id'] as String,
@@ -24,7 +23,6 @@ class ObtainCard {
     );
   }
 
-  // 将对象转换为 JSON
   Map<String, dynamic> toJson() {
     return {
       'card_id': cardId,
