@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // 引入 Toast 插件
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:database_final_project/provider/api.dart';
+import 'package:database_final_project/page/home_page.dart';
+import 'package:database_final_project/class_data/user_character.dart';
 
 class CharacterPage extends StatelessWidget {
   const CharacterPage({super.key});
@@ -37,7 +41,10 @@ class CharacterPage extends StatelessWidget {
                       if (index < characters.length) {
                         // 有角色时显示角色信息
                         return GestureDetector(
-                          onTap: null, // 点击无响应
+                          onTap: () async {
+                            await _handleCharacterTap(
+                                context, serverAPI, characters[index]);
+                          },
                           child: _buildCharacterBox(
                             characters[index].characterName,
                           ),
@@ -46,14 +53,14 @@ class CharacterPage extends StatelessWidget {
                         // 显示 + 按钮
                         return GestureDetector(
                           onTap: () {
-                            _showAddCharacterDialog(context, serverAPI);
+                            _showAddCharacterDialog(context);
                           },
                           child: _buildAddCharacterBox(),
                         );
                       } else {
                         // 无角色时显示空框
                         return GestureDetector(
-                          onTap: null, // 点击无响应
+                          onTap: null,
                           child: _buildCharacterBox(''),
                         );
                       }
@@ -68,105 +75,46 @@ class CharacterPage extends StatelessWidget {
     );
   }
 
-  // 显示添加角色的对话框
-  void _showAddCharacterDialog(BuildContext context, ServerAPI serverAPI) {
-    final TextEditingController _characterNameController =
-        TextEditingController();
-    bool isProcessing = false;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              scrollable: true, // 启用滚动
-              title: const Text('輸入角色名稱'),
-              content: TextField(
-                controller: _characterNameController,
-                decoration: const InputDecoration(
-                  labelText: '角色名稱',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: isProcessing
-                      ? null
-                      : () {
-                          Navigator.of(context).pop();
-                        },
-                  child: const Text('取消'),
-                ),
-                ElevatedButton(
-                  onPressed: isProcessing
-                      ? null
-                      : () async {
-                          final characterName =
-                              _characterNameController.text.trim();
-                          if (characterName.isNotEmpty) {
-                            setState(() {
-                              isProcessing = true;
-                            });
-                            await _handleAddCharacter(
-                                context, serverAPI, characterName);
-                            if (!context.mounted) return;
-                            setState(() {
-                              isProcessing = false;
-                            });
-                            Navigator.of(context).pop();
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "角色名稱不能為空",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              backgroundColor: Colors.red,
-                              textColor: Colors.white,
-                            );
-                          }
-                        },
-                  child: isProcessing
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Text('確認'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  // 添加角色逻辑
-  Future<void> _handleAddCharacter(
-      BuildContext context, ServerAPI serverAPI, String characterName) async {
+  // 处理角色点击事件并导航到 HomePage
+  Future<void> _handleCharacterTap(BuildContext context, ServerAPI serverAPI,
+      UserCharacter character) async {
     try {
-      await serverAPI.registerUser(characterName); // 调用注册 API
-      await serverAPI.getUserCharacter(); // 更新角色数据
-      Fluttertoast.showToast(
-        msg: "角色已成功添加！",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-      );
+      final handleCharacterTapresult =
+          await serverAPI.getCharacterList(character.characterId.toString());
+      if (handleCharacterTapresult == 'getCharacterList success') {
+        // log('Character data fetched successfully.');
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: "加载角色失败：$handleCharacterTapresult",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
     } catch (e) {
       Fluttertoast.showToast(
-        msg: "添加角色失败：$e",
+        msg: "加载角色失败：$e",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         backgroundColor: Colors.red,
         textColor: Colors.white,
       );
     }
+  }
+
+  // 显示添加角色的对话框
+  void _showAddCharacterDialog(BuildContext context) {
+    Fluttertoast.showToast(
+      msg: "添加角色功能尚未实现",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.blue,
+      textColor: Colors.white,
+    );
   }
 
   // 建立角色框框的函式

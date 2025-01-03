@@ -1,6 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:database_final_project/provider/api.dart';
+import 'package:database_final_project/class_data/obtain_card.dart';
 
 class BackpackScreen extends StatefulWidget {
   const BackpackScreen({super.key});
@@ -10,24 +11,13 @@ class BackpackScreen extends StatefulWidget {
 }
 
 class _BackpackScreenState extends State<BackpackScreen> {
-  late Future<List<CardItem>> _cardList;
-
-  @override
-  void initState() {
-    super.initState();
-    _cardList = loadCards(); // 加载卡片列表
-  }
-
-  // 加载 JSON 并解析为 CardItem 列表
-  Future<List<CardItem>> loadCards() async {
-    final String response =
-        await rootBundle.loadString('assets/json/cards.json');
-    final List<dynamic> data = jsonDecode(response);
-    return data.map((json) => CardItem.fromJson(json)).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final serverAPI = Provider.of<ServerAPI>(context);
+
+    // 获取背包数据
+    final cardList = serverAPI.backpackCards;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -37,21 +27,12 @@ class _BackpackScreenState extends State<BackpackScreen> {
         backgroundColor: const Color(0xFF8D6E63),
         toolbarHeight: 40,
       ),
-      body: FutureBuilder<List<CardItem>>(
-        future: _cardList,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("加载失败: ${snapshot.error}"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("背包为空"));
-          } else {
-            final cardList = snapshot.data!;
-            return GridView.builder(
+      body: cardList.isEmpty
+          ? const Center(child: Text("背包是空的"))
+          : GridView.builder(
               padding: const EdgeInsets.all(8.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                //每行顯示幾個格子
+                // 每行显示几个格子
                 crossAxisCount: 6,
                 crossAxisSpacing: 8.0,
                 mainAxisSpacing: 8.0,
@@ -96,14 +77,11 @@ class _BackpackScreenState extends State<BackpackScreen> {
                   ),
                 );
               },
-            );
-          }
-        },
-      ),
+            ),
     );
   }
 
-  void _showCardDetail(BuildContext context, CardItem card) {
+  void _showCardDetail(BuildContext context, ObtainCard card) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -128,7 +106,7 @@ class _BackpackScreenState extends State<BackpackScreen> {
                   ),
                   Row(
                     children: List.generate(
-                      _getStarCount(card.cardRarity),
+                      _getStarCount(card.rarity),
                       (index) => const Icon(
                         Icons.star,
                         color: Colors.yellow,
@@ -166,32 +144,5 @@ class _BackpackScreenState extends State<BackpackScreen> {
     } catch (e) {
       return 0;
     }
-  }
-}
-
-// 卡片数据模型
-class CardItem {
-  final String cardId;
-  final String cardImage;
-  final String cardName;
-  final String cardRarity;
-  final String cardDescription;
-
-  CardItem({
-    required this.cardId,
-    required this.cardImage,
-    required this.cardName,
-    required this.cardRarity,
-    required this.cardDescription,
-  });
-
-  factory CardItem.fromJson(Map<String, dynamic> json) {
-    return CardItem(
-      cardId: json['card_id'],
-      cardImage: json['card_image'],
-      cardName: json['card_name'],
-      cardRarity: json['card_rarity'],
-      cardDescription: json['card_description'],
-    );
   }
 }

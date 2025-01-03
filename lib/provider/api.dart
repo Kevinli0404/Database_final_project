@@ -2,11 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/material.dart';
+// import 'package:http_parser/http_parser.dart';
+// import 'package:path_provider/path_provider.dart';
+
+import 'package:database_final_project/class_data/character_data.dart';
+import 'package:database_final_project/class_data/user_character.dart';
+import 'package:database_final_project/class_data/obtain_card.dart';
 
 // class ServerAPI
 class ServerAPI with ChangeNotifier {
@@ -17,6 +22,7 @@ class ServerAPI with ChangeNotifier {
   int? _userId; // 用戶 ID
   List<UserCharacter> _userCharacters = []; // 角色列表
   CharacterData? _characterData; // 用於存儲角色詳細資料
+  List<ObtainCard> _backpackCards = []; // 用于存储背包数据
 
   // get port => _port;
 
@@ -40,6 +46,8 @@ class ServerAPI with ChangeNotifier {
 
   List<UserCharacter> get userCharacters => List.unmodifiable(_userCharacters);
   CharacterData? get characterData => _characterData;
+  // Getter for backpack cards
+  List<ObtainCard> get backpackCards => List.unmodifiable(_backpackCards);
 
   set setHost(String hostIP) {
     _hostIP = hostIP;
@@ -271,6 +279,73 @@ class ServerAPI with ChangeNotifier {
       rethrow;
     }
   }
+
+  //獲得背包資料
+  Future<String> getCharacterBackpack(String characterID) async {
+    Uri hostUrl = Uri.http(_host, '/api/v1/get_character_backpack');
+    try {
+      http.Response response = await http.post(
+        hostUrl,
+        body: {
+          "access_token": _accessToken,
+          "character_id": characterID,
+        },
+      );
+
+      // 将响应解码为 Map
+      Map<String, dynamic> respose = jsonDecode(response.body);
+
+      log('getCharacterBackpack response = ${response.body}');
+
+      if (respose["err"] == false && response.statusCode == 200) {
+        // 将 JSON 数据转换为 List<ObtainCard>
+        _backpackCards = (respose['obtain_card'] as List)
+            .map((item) => ObtainCard.fromJson(item))
+            .toList();
+
+        notifyListeners(); // 通知 UI 数据已更新
+        return 'getCharacterBackpack success';
+      } else {
+        throw Exception(respose["err_msg"] ?? "Unknown error");
+      }
+    } catch (e) {
+      log('Error fetching backpack data: $e');
+      rethrow;
+    }
+  }
+
+  //獲得背包資料
+  Future<String> getCardPool() async {
+    Uri hostUrl = Uri.http(_host, '/api/v1/get_card_pool');
+    try {
+      http.Response response = await http.post(
+        hostUrl,
+        body: {
+          "access_token": _accessToken,
+        },
+      );
+
+      // 将响应解码为 Map
+      Map<String, dynamic> respose = jsonDecode(response.body);
+
+      log('getCardPool response = ${response.body}');
+
+      if (respose["err"] == false && response.statusCode == 200) {
+        // 将 JSON 数据转换为 List<ObtainCard>
+        _backpackCards = (respose['obtain_card'] as List)
+            .map((item) => ObtainCard.fromJson(item))
+            .toList();
+
+        notifyListeners(); // 通知 UI 数据已更新
+        return 'getCardPool success';
+      } else {
+        throw Exception(respose["err_msg"] ?? "Unknown error");
+      }
+    } catch (e) {
+      log('Error fetching backpack data: $e');
+      rethrow;
+    }
+  }
 }
 
 //裝置資料
@@ -284,77 +359,4 @@ Future<String> getDeviceInfo() async {
     return iosInfo.name;
   }
   return 'Unknown';
-}
-
-//角色列表的角色
-class UserCharacter {
-  final int characterId;
-  final String characterName;
-  final int userId;
-
-  UserCharacter({
-    required this.characterId,
-    required this.characterName,
-    required this.userId,
-  });
-
-  // 修正 JSON 映射
-  factory UserCharacter.fromJson(Map<String, dynamic> json) {
-    return UserCharacter(
-      characterId: json['character_id'] as int,
-      characterName: json['character_name'] as String,
-      userId: json['user_id'] as int,
-    );
-  }
-}
-
-//角色基本資料
-class CharacterData {
-  final int characterId;
-  final String characterName;
-  final String createTime;
-  final int gem;
-  final int granteeState;
-  final int topUpState;
-  final int userId;
-  final int vipLevel;
-
-  CharacterData({
-    required this.characterId,
-    required this.characterName,
-    required this.createTime,
-    required this.gem,
-    required this.granteeState,
-    required this.topUpState,
-    required this.userId,
-    required this.vipLevel,
-  });
-
-  // 從 JSON 映射到 CharacterData
-  factory CharacterData.fromJson(Map<String, dynamic> json) {
-    return CharacterData(
-      characterId: json['character_id'] as int,
-      characterName: json['character_name'] as String,
-      createTime: json['create_time'] as String,
-      gem: json['gem'] as int,
-      granteeState: json['grantee_state'] as int,
-      topUpState: json['top_up_state'] as int,
-      userId: json['user_id'] as int,
-      vipLevel: json['vip_level'] as int,
-    );
-  }
-
-  // 將 CharacterData 映射回 JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'character_id': characterId,
-      'character_name': characterName,
-      'create_time': createTime,
-      'gem': gem,
-      'grantee_state': granteeState,
-      'top_up_state': topUpState,
-      'user_id': userId,
-      'vip_level': vipLevel,
-    };
-  }
 }

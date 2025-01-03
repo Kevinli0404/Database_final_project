@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +10,7 @@ import 'package:database_final_project/screen/backpack_screen.dart';
 import 'package:database_final_project/screen/store_screen.dart';
 import 'package:database_final_project/screen/rounded_rectangles_screen_ten.dart';
 import 'package:database_final_project/screen/rounded_rectangles_screen_one.dart';
+import 'package:database_final_project/provider/api.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -23,6 +26,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sharedState = Provider.of<SharedState>(context);
+    final serverAPI = Provider.of<ServerAPI>(context);
+
     return Scaffold(
       backgroundColor: const Color(0xFFEAF3FF),
       body: IndexedStack(
@@ -58,8 +63,24 @@ class HomePage extends StatelessWidget {
                           : Colors.grey,
                       size: 24,
                     ),
-                    onPressed: () {
-                      sharedState.updateCurrentIndex(1);
+                    onPressed: () async {
+                      final String characterID =
+                          serverAPI.characterData!.characterId.toString();
+                      final String getCharacterBackpackResult =
+                          await serverAPI.getCharacterBackpack(characterID);
+                      log('getCharacterBackpackResult = $getCharacterBackpackResult');
+                      if (getCharacterBackpackResult ==
+                          'getCharacterBackpack success') {
+                        final String backpackCards =
+                            serverAPI.backpackCards.toString();
+                        log('backpackCards = $backpackCards');
+                        sharedState.updateCurrentIndex(1);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Failed to load backpack')),
+                        );
+                      }
                     },
                   ),
                   IconButton(

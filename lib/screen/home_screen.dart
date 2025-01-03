@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:database_final_project/provider/shared_state.dart';
 import 'package:provider/provider.dart';
+import 'package:database_final_project/provider/api.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,6 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final sharedState = Provider.of<SharedState>(context);
+    final serverAPI = Provider.of<ServerAPI>(context);
+
     return Scaffold(
       backgroundColor: const Color(0xFFEAF3FF),
       body: SafeArea(
@@ -66,14 +69,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Lv. 32',
-                            style: TextStyle(
+                            'VIP ${serverAPI.characterData!.vipLevel}',
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
+                              color: Color(0xFFFFD700), // 设置字体颜色为金色
                             ),
                           ),
                         ],
