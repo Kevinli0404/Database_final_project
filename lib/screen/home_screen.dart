@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:database_final_project/provider/api.dart';
 import 'package:database_final_project/provider/shared_state.dart';
@@ -190,16 +193,63 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 // 祈願按鈕
                                 Positioned(
-                                  bottom: 17, // 往下移動，減少數值使其更接近底部
-                                  // left: 30, // 往右移動，增加左邊距
-                                  right: 30, // 增加右邊距，保持相對居中
+                                  bottom: 17,
+                                  right: 30,
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       GestureDetector(
-                                        onTap: () {
-                                          sharedState.toggleDrawed();
-                                          sharedState.updateCurrentIndex(3);
+                                        onTap: () async {
+                                          final serverAPI =
+                                              Provider.of<ServerAPI>(context,
+                                                  listen: false);
+                                          final selectedCardPoolID = serverAPI
+                                              .cardPool[selectedIndex]
+                                              .cardPoolId;
+                                          //當前寶石數量
+                                          final currentGem =
+                                              serverAPI.characterData?.gem ?? 0;
+
+                                          if (currentGem < 160) {
+                                            // 寶石不足
+                                            Fluttertoast.showToast(
+                                              msg: "寶石不足抽取失敗",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0,
+                                            );
+                                            return;
+                                          }
+
+                                          final String gachaOnceResult =
+                                              await serverAPI.gachaOnce(
+                                            characterID: serverAPI
+                                                .characterData!.characterId
+                                                .toString(),
+                                            cardPoolID:
+                                                selectedCardPoolID.toString(),
+                                          );
+
+                                          if (gachaOnceResult ==
+                                              'gachaOnce success') {
+                                            await serverAPI.getCharacterList(
+                                                serverAPI
+                                                    .characterData!.characterId
+                                                    .toString());
+                                            sharedState.toggleDrawed();
+                                            sharedState.updateCurrentIndex(3);
+                                          } else {
+                                            Fluttertoast.showToast(
+                                              msg: "抽取失敗",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0,
+                                            );
+                                          }
                                         },
                                         child: Container(
                                           width: 70,
@@ -257,9 +307,56 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       const SizedBox(width: 8),
                                       GestureDetector(
-                                        onTap: () {
-                                          sharedState.toggleDrawed();
-                                          sharedState.updateCurrentIndex(4);
+                                        onTap: () async {
+                                          final serverAPI =
+                                              Provider.of<ServerAPI>(context,
+                                                  listen: false);
+                                          final selectedCardPoolID = serverAPI
+                                              .cardPool[selectedIndex]
+                                              .cardPoolId;
+                                          //當前寶石數量
+                                          final currentGem =
+                                              serverAPI.characterData?.gem ?? 0;
+
+                                          if (currentGem < 1600) {
+                                            // 寶石不足
+                                            Fluttertoast.showToast(
+                                              msg: "寶石不足抽取失敗",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0,
+                                            );
+                                            return;
+                                          }
+
+                                          final String gachaTenTimesResult =
+                                              await serverAPI.gachaTenTimes(
+                                            characterID: serverAPI
+                                                .characterData!.characterId
+                                                .toString(),
+                                            cardPoolID:
+                                                selectedCardPoolID.toString(),
+                                          );
+                                          if (gachaTenTimesResult ==
+                                              'gachaTenTimes success') {
+                                            await serverAPI.getCharacterList(
+                                                serverAPI
+                                                    .characterData!.characterId
+                                                    .toString());
+                                            sharedState.toggleDrawed();
+                                            sharedState.updateCurrentIndex(4);
+                                          } else {
+                                            Fluttertoast.showToast(
+                                              msg: "抽取失敗",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0,
+                                            );
+                                          }
                                         },
                                         child: Container(
                                           width: 70,

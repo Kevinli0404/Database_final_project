@@ -20,7 +20,6 @@ class CharacterData {
     required this.vipLevel,
   });
 
-  // 從 JSON 映射到 CharacterData
   factory CharacterData.fromJson(Map<String, dynamic> json) {
     return CharacterData(
       characterId: json['character_id'] as int,
@@ -34,7 +33,6 @@ class CharacterData {
     );
   }
 
-  // 將 CharacterData 映射回 JSON
   Map<String, dynamic> toJson() {
     return {
       'character_id': characterId,

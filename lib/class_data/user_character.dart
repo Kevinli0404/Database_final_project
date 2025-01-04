@@ -10,7 +10,6 @@ class UserCharacter {
     required this.userId,
   });
 
-  // 修正 JSON 映射
   factory UserCharacter.fromJson(Map<String, dynamic> json) {
     return UserCharacter(
       characterId: json['character_id'] as int,

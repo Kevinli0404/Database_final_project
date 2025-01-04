@@ -34,6 +34,7 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           "創世結晶商城",
           style: TextStyle(color: Colors.white),
@@ -237,8 +238,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                   final serverAPI = Provider.of<ServerAPI>(
                                       context,
                                       listen: false);
-                                  log('item.ticket : ${item.ticket}');
-                                  log('item.ticket : ${item.ticket}');
+                                  // log('item.ticket : ${item.ticket}');
                                   final String topUpResult =
                                       await serverAPI.topUp(
                                     characterID: serverAPI
@@ -248,7 +248,10 @@ class _StoreScreenState extends State<StoreScreen> {
                                   );
 
                                   if (topUpResult == 'topUp success') {
-                                    await serverAPI.getUserCharacter();
+                                    await serverAPI.getCharacterList(serverAPI
+                                        .characterData!.characterId
+                                        .toString());
+                                    //  notifyListeners();
                                     Navigator.pop(context);
                                     disposeControllers();
                                     Fluttertoast.showToast(

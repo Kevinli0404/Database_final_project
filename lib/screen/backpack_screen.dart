@@ -15,11 +15,11 @@ class _BackpackScreenState extends State<BackpackScreen> {
   Widget build(BuildContext context) {
     final serverAPI = Provider.of<ServerAPI>(context);
 
-    // 获取背包数据
     final cardList = serverAPI.backpackCards;
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           "背包",
           style: TextStyle(color: Colors.white),
@@ -32,7 +32,6 @@ class _BackpackScreenState extends State<BackpackScreen> {
           : GridView.builder(
               padding: const EdgeInsets.all(8.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                // 每行显示几个格子
                 crossAxisCount: 6,
                 crossAxisSpacing: 8.0,
                 mainAxisSpacing: 8.0,
@@ -87,51 +86,78 @@ class _BackpackScreenState extends State<BackpackScreen> {
       barrierDismissible: true,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFFFFF8E1), // 米白色背景
+          // 米白色背景
+          backgroundColor: const Color(0xFFFFF8E1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    card.cardName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Row(
-                    children: List.generate(
-                      _getStarCount(card.rarity),
-                      (index) => const Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                        size: 20,
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      card.cardName,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Image.asset(
-                card.cardImage,
-                height: 150,
-                width: 150,
-                fit: BoxFit.contain,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                card.cardDescription,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 14,
+                    Row(
+                      children: List.generate(
+                        _getStarCount(card.rarity),
+                        (index) => const Icon(
+                          Icons.star,
+                          color: Colors.yellow,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                Image.asset(
+                  card.cardImage,
+                  height: 150,
+                  width: 150,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  card.cardDescription,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                if (card.skillName != null)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "技能名稱: ${card.skillName ?? 'N/A'}",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "技能消耗: ${card.skillCost ?? 'N/A'}",
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "技能傷害: ${card.skillDamage ?? 'N/A'}",
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           ),
         );
       },

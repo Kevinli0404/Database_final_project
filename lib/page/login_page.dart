@@ -154,15 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                               await serverAPI.loginIn(email, password);
 
                           if (resultLogin == 'login success') {
-                            // log('Token: ${serverAPI.accessToken}');
-                            // log('User ID: ${serverAPI.userId}');
                             _audioPlayer.stop();
-                            // Navigator.of(context).pushReplacement(
-                            //   MaterialPageRoute(
-                            //     builder: (context) => HomePage(),
-                            //   ),
-                            // );
-
                             try {
                               await serverAPI.getUserCharacter();
                               if (!context.mounted) return;
@@ -285,8 +277,6 @@ class _LoginPageState extends State<LoginPage> {
                                 checkPassword,
                               );
 
-                              // log('result = $result');
-
                               if (!context.mounted) return;
 
                               if (result == 'register success') {
@@ -381,7 +371,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  // const SizedBox(height: 5), // 添加間距
                   AnimatedOpacity(
                     opacity: _opacity,
                     duration: const Duration(seconds: 5),

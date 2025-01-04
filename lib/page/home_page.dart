@@ -68,12 +68,8 @@ class HomePage extends StatelessWidget {
                           serverAPI.characterData!.characterId.toString();
                       final String getCharacterBackpackResult =
                           await serverAPI.getCharacterBackpack(characterID);
-                      // log('getCharacterBackpackResult = $getCharacterBackpackResult');
                       if (getCharacterBackpackResult ==
                           'getCharacterBackpack success') {
-                        // final String backpackCards =
-                        //     serverAPI.backpackCards.toString();
-                        // log('backpackCards = $backpackCards');
                         sharedState.updateCurrentIndex(1);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(

@@ -11,12 +11,6 @@ void main() {
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]).then((_) {
-    // runApp(
-    //   ChangeNotifierProvider(
-    //     create: (_) => SharedState(),
-    //     child: const MyApp(),
-    //   ),
-    // );
     runApp(
       MultiProvider(
         providers: [

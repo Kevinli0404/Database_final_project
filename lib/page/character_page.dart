@@ -18,7 +18,7 @@ class CharacterPage extends StatelessWidget {
           // 背景圖片
           Positioned.fill(
             child: Image.asset(
-              'assets/logo/genshin_login.jpg', // 替換為你的圖片路徑
+              'assets/logo/genshin_login.jpg',
               fit: BoxFit.cover,
             ),
           ),
@@ -39,7 +39,6 @@ class CharacterPage extends StatelessWidget {
                     3,
                     (index) {
                       if (index < characters.length) {
-                        // 有角色时显示角色信息
                         return GestureDetector(
                           onTap: () async {
                             await _handleCharacterTap(
@@ -50,7 +49,6 @@ class CharacterPage extends StatelessWidget {
                           ),
                         );
                       } else if (index == characters.length) {
-                        // 显示 + 按钮
                         return GestureDetector(
                           onTap: () {
                             _showAddCharacterDialog(context);
@@ -58,7 +56,6 @@ class CharacterPage extends StatelessWidget {
                           child: _buildAddCharacterBox(),
                         );
                       } else {
-                        // 无角色时显示空框
                         return GestureDetector(
                           onTap: null,
                           child: _buildCharacterBox(''),
@@ -75,7 +72,6 @@ class CharacterPage extends StatelessWidget {
     );
   }
 
-  // 处理角色点击事件并导航到 HomePage
   Future<void> _handleCharacterTap(BuildContext context, ServerAPI serverAPI,
       UserCharacter character) async {
     try {
@@ -84,9 +80,6 @@ class CharacterPage extends StatelessWidget {
       final getCardPoolResult = await serverAPI.getCardPool();
       if (getCharacterListResult == 'getCharacterList success' &&
           getCardPoolResult == 'getCardPool success') {
-        // log('Character data fetched successfully.');
-        // log('serverAPI.cardPool');
-        // log('${serverAPI.cardPool}');
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => HomePage()),
         );
@@ -110,10 +103,9 @@ class CharacterPage extends StatelessWidget {
     }
   }
 
-  // 显示添加角色的对话框
   void _showAddCharacterDialog(BuildContext context) {
     Fluttertoast.showToast(
-      msg: "添加角色功能尚未实现",
+      msg: "",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
       backgroundColor: Colors.blue,

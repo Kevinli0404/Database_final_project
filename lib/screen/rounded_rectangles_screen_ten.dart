@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:database_final_project/provider/api.dart';
 import 'package:database_final_project/provider/shared_state.dart';
 import 'package:provider/provider.dart';
 
@@ -14,17 +15,15 @@ class RoundedRectanglesScreenTen extends StatefulWidget {
 
 class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
     with SingleTickerProviderStateMixin {
-  List<Map<String, dynamic>> cards = []; // 儲存卡片數據
-  late AnimationController _controller; // 控制動畫
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    loadCardData(); // 載入 JSON 數據
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..repeat(); // 動畫循環
+    )..repeat();
   }
 
   @override
@@ -33,54 +32,46 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
     super.dispose();
   }
 
-  // 從 assets/json/cards.json 載入卡片數據
-  Future<void> loadCardData() async {
-    final String response =
-        await rootBundle.loadString('assets/json/cards.json');
-    final List<dynamic> data = json.decode(response);
-
-    setState(() {
-      cards = data.cast<Map<String, dynamic>>();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final serverAPI = Provider.of<ServerAPI>(context);
     final sharedState = Provider.of<SharedState>(context);
+
+    final List<Map<String, dynamic>> gachaResults =
+        serverAPI.gachaTenTimesResults;
+
     return Scaffold(
       body: GestureDetector(
-        onTap: () {
-          // 點擊背景時改變狀態
+        onTap: () async {
+          serverAPI.clearGachaTenTimesResults();
+          // 點擊背景時改變狀態並切換頁面
           sharedState.toggleDrawed();
           sharedState.updateCurrentIndex(0);
         },
         child: Container(
-          // 設置背景圖片
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/logo/milky_way.png'), // 背景圖片路徑
-              fit: BoxFit.cover, // 讓圖片填滿整個畫面
+              image: AssetImage('assets/logo/milky_way.png'),
+              fit: BoxFit.cover,
             ),
           ),
           child: Center(
-            child: cards.isEmpty
-                ? const CircularProgressIndicator() // 如果數據還在載入中
+            child: gachaResults.isEmpty
+                ? const CircularProgressIndicator()
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // 上排顯示 5 張卡片
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: cards
+                        children: gachaResults
                             .sublist(0, 5)
                             .map((card) => buildCard(card))
                             .toList(),
                       ),
-                      const SizedBox(height: 20), // 上下排間距
-                      // 下排顯示 5 張卡片
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: cards
+                        children: gachaResults
                             .sublist(5, 10)
                             .map((card) => buildCard(card))
                             .toList(),
@@ -93,14 +84,12 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
     );
   }
 
-  // 構建每個卡片
   Widget buildCard(Map<String, dynamic> card) {
-    final int rarity = int.parse(card['card_rarity']);
+    final int rarity = int.parse(card['gacha_result']['rarity']);
 
     return GestureDetector(
       onTap: () {
-        // 點擊卡片顯示詳細資訊
-        _showCardDetail(context, card);
+        _showCardDetail(context, card['gacha_result']);
       },
       child: AnimatedBuilder(
         animation: _controller,
@@ -121,17 +110,17 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
           );
 
           return Container(
-            margin: const EdgeInsets.all(8.0), // 卡片間距
-            width: 100, // 卡片寬度
-            height: 115, // 卡片高度
+            margin: const EdgeInsets.all(8.0),
+            width: 100,
+            height: 115,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15), // 圓角
-              gradient: rarity == 5 ? gradient : null, // 動態閃耀效果
+              borderRadius: BorderRadius.circular(15),
+              gradient: rarity == 5 ? gradient : null,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
                   blurRadius: 5,
-                  offset: const Offset(0, 3), // 陰影位置
+                  offset: const Offset(0, 3),
                 ),
               ],
               border: Border.all(
@@ -142,8 +131,8 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.asset(
-                card['card_image'], // 卡片圖片
-                fit: BoxFit.contain, // 填滿整個 Container
+                card['gacha_result']['card_image'],
+                fit: BoxFit.contain,
                 width: double.infinity,
                 height: double.infinity,
               ),
@@ -154,15 +143,14 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
     );
   }
 
-  // 顯示卡片詳細資訊的對話框
   void _showCardDetail(BuildContext context, Map<String, dynamic> card) {
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        final int rarity = int.parse(card['card_rarity']);
+        final int rarity = int.parse(card['rarity']);
         return AlertDialog(
-          backgroundColor: const Color(0xFFFFF8E1), // 米白色背景
+          backgroundColor: const Color(0xFFFFF8E1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),

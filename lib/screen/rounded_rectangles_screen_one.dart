@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:database_final_project/provider/shared_state.dart';
 import 'package:provider/provider.dart';
+import 'package:database_final_project/provider/api.dart';
+import 'package:database_final_project/provider/shared_state.dart';
 
 class RoundedRectanglesScreenOne extends StatefulWidget {
   const RoundedRectanglesScreenOne({super.key});
@@ -14,13 +13,11 @@ class RoundedRectanglesScreenOne extends StatefulWidget {
 
 class _RoundedRectanglesScreenOneState extends State<RoundedRectanglesScreenOne>
     with SingleTickerProviderStateMixin {
-  List<Map<String, dynamic>> cards = []; // 儲存卡片數據
-  late AnimationController _controller; // 控制動畫
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    loadCardData(); // 載入 JSON 數據
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -33,23 +30,18 @@ class _RoundedRectanglesScreenOneState extends State<RoundedRectanglesScreenOne>
     super.dispose();
   }
 
-  // 從 assets/json/cards.json 載入卡片數據
-  Future<void> loadCardData() async {
-    final String response =
-        await rootBundle.loadString('assets/json/cards_one_draw.json');
-    final List<dynamic> data = json.decode(response);
-
-    setState(() {
-      cards = data.cast<Map<String, dynamic>>();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final sharedState = Provider.of<SharedState>(context);
+    final serverAPI = Provider.of<ServerAPI>(context);
+
+    // 獲取抽卡結果
+    final gachaResults = serverAPI.gachaResults;
+
     return Scaffold(
       body: GestureDetector(
-        onTap: () {
+        onTap: () async {
+          serverAPI.clearGachaResults();
           // 點擊背景時改變狀態並切換頁面
           sharedState.toggleDrawed();
           sharedState.updateCurrentIndex(0);
@@ -63,14 +55,15 @@ class _RoundedRectanglesScreenOneState extends State<RoundedRectanglesScreenOne>
             ),
           ),
           child: Center(
-            child: cards.isEmpty
-                ? const CircularProgressIndicator() // 如果數據還在載入中
+            child: gachaResults.isEmpty
+                ? const CircularProgressIndicator() // 如果沒有抽卡結果
                 : GestureDetector(
                     onTap: () {
                       // 點擊卡片時顯示詳細資訊
-                      _showCardDetail(context, cards[0]);
+                      _showCardDetail(context, gachaResults[0]['gacha_result']);
                     },
-                    child: buildCard(cards[0]), // 顯示第一張卡片
+                    child:
+                        buildCard(gachaResults[0]['gacha_result']), // 顯示第一張卡片
                   ),
           ),
         ),
@@ -80,7 +73,7 @@ class _RoundedRectanglesScreenOneState extends State<RoundedRectanglesScreenOne>
 
   // 構建單張卡片
   Widget buildCard(Map<String, dynamic> card) {
-    final int rarity = int.parse(card['card_rarity']);
+    final int rarity = int.parse(card['rarity']);
 
     return AnimatedBuilder(
       animation: _controller,
@@ -159,7 +152,7 @@ class _RoundedRectanglesScreenOneState extends State<RoundedRectanglesScreenOne>
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        final int rarity = int.parse(card['card_rarity']);
+        final int rarity = int.parse(card['rarity']);
         return AlertDialog(
           backgroundColor: const Color(0xFFFFF8E1), // 米白色背景
           shape: RoundedRectangleBorder(
