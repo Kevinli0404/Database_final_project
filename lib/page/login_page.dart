@@ -154,8 +154,8 @@ class _LoginPageState extends State<LoginPage> {
                               await serverAPI.loginIn(email, password);
 
                           if (resultLogin == 'login success') {
-                            log('Token: ${serverAPI.accessToken}');
-                            log('User ID: ${serverAPI.userId}');
+                            // log('Token: ${serverAPI.accessToken}');
+                            // log('User ID: ${serverAPI.userId}');
                             _audioPlayer.stop();
                             // Navigator.of(context).pushReplacement(
                             //   MaterialPageRoute(
@@ -285,7 +285,7 @@ class _LoginPageState extends State<LoginPage> {
                                 checkPassword,
                               );
 
-                              log('result = $result');
+                              // log('result = $result');
 
                               if (!context.mounted) return;
 
@@ -357,26 +357,54 @@ class _LoginPageState extends State<LoginPage> {
               color: Colors.white,
             ),
             Center(
-              child: AnimatedOpacity(
-                opacity: _opacity,
-                duration: const Duration(seconds: 3),
-                curve: Curves.easeInOut,
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: _blurValue,
-                      sigmaY: _blurValue,
-                    ),
-                    child: SizedBox(
-                      width: 250,
-                      height: 250,
-                      child: Image.asset(
-                        'assets/logo/genshin_login_logo.png',
-                        fit: BoxFit.contain,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedOpacity(
+                    opacity: _opacity,
+                    duration: const Duration(seconds: 3),
+                    curve: Curves.easeInOut,
+                    child: ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: _blurValue,
+                          sigmaY: _blurValue,
+                        ),
+                        child: SizedBox(
+                          width: 250,
+                          height: 250,
+                          child: Image.asset(
+                            'assets/logo/genshin_login_logo.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  // const SizedBox(height: 5), // 添加間距
+                  AnimatedOpacity(
+                    opacity: _opacity,
+                    duration: const Duration(seconds: 5),
+                    curve: Curves.easeInOut,
+                    child: Text(
+                      '點擊螢幕進入',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF006400)
+                            .withOpacity(0.8), // 墨綠色，稍微透明
+                        letterSpacing: 3.0, // 調整字體間距
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(1.0, 1.0),
+                            blurRadius: 2.0,
+                            color: Colors.black.withOpacity(0.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

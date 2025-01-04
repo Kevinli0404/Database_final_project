@@ -153,21 +153,169 @@ class _HomeScreenState extends State<HomeScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Expanded(
-                                          child: Center(
-                                            child: Text(
-                                              cardPool[selectedIndex].cardName,
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
+                                        Center(
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                cardPool[selectedIndex]
+                                                    .cardName,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
                                               ),
-                                              textAlign: TextAlign.center,
-                                            ),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Text(
+                                                '${(cardPool[selectedIndex].fakeHighRarityProbability * 100).toStringAsFixed(2)}%', // 格式化為兩位小數，並加上 %
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(
+                                                width: 50,
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
+                                  ),
+                                ),
+                                // 祈願按鈕
+                                Positioned(
+                                  bottom: 17, // 往下移動，減少數值使其更接近底部
+                                  // left: 30, // 往右移動，增加左邊距
+                                  right: 30, // 增加右邊距，保持相對居中
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          sharedState.toggleDrawed();
+                                          sharedState.updateCurrentIndex(3);
+                                        },
+                                        child: Container(
+                                          width: 70,
+                                          decoration: BoxDecoration(
+                                            color: Colors.amber.shade50,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 5,
+                                                offset: const Offset(0, 3),
+                                              ),
+                                            ],
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4.0, horizontal: 8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Text(
+                                                '祈願1次',
+                                                style: TextStyle(
+                                                  color: Color(0xFF8D6E63),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/logo/gen_stone.png',
+                                                    width: 12,
+                                                    height: 12,
+                                                  ),
+                                                  const SizedBox(width: 2),
+                                                  const Text(
+                                                    'x 10',
+                                                    style: TextStyle(
+                                                      color: Color(0xFF8D6E63),
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      GestureDetector(
+                                        onTap: () {
+                                          sharedState.toggleDrawed();
+                                          sharedState.updateCurrentIndex(4);
+                                        },
+                                        child: Container(
+                                          width: 70,
+                                          decoration: BoxDecoration(
+                                            color: Colors.amber.shade50,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                blurRadius: 5,
+                                                offset: const Offset(0, 3),
+                                              ),
+                                            ],
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 4.0, horizontal: 8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Text(
+                                                '祈願10次',
+                                                style: TextStyle(
+                                                  color: Color(0xFF8D6E63),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Image.asset(
+                                                    'assets/logo/gen_stone.png',
+                                                    width: 12,
+                                                    height: 12,
+                                                  ),
+                                                  const SizedBox(width: 2),
+                                                  const Text(
+                                                    'x 100',
+                                                    style: TextStyle(
+                                                      color: Color(0xFF8D6E63),
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

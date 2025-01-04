@@ -343,31 +343,99 @@ class ServerAPI with ChangeNotifier {
     }
   }
 
-  // Future<String> getCardPool() async {
-  //   Uri hostUrl = Uri.http(_host, '/api/v1/get_card_pool');
-  //   try {
-  //     http.Response response = await http.post(
-  //       hostUrl,
-  //       body: {
-  //         "access_token": _accessToken,
-  //       },
-  //     );
+  // 單抽
+  Future<String> gachaOnce({
+    required String cardPoolID,
+    required String characterID,
+  }) async {
+    Uri hostUrl = Uri.http(_host, '/api/v1/gacha_once');
+    try {
+      http.Response response = await http.post(
+        hostUrl,
+        body: {
+          "card_pool_id": cardPoolID,
+          "character_id": characterID,
+        },
+      );
 
-  //     // 将响应解码为 Map
-  //     Map<String, dynamic> respose = jsonDecode(response.body);
+      // 将响应解码为 Map
+      Map<String, dynamic> respose = jsonDecode(response.body);
 
-  //     log('getCardPool response = ${response.body}');
+      log('getCardPool response = ${response.body}');
 
-  //     if (respose["err"] == false && response.statusCode == 200) {
-  //       return 'getCardPool success';
-  //     } else {
-  //       throw Exception(respose["err_msg"] ?? "Unknown error");
-  //     }
-  //   } catch (e) {
-  //     log('Error fetching backpack data: $e');
-  //     rethrow;
-  //   }
-  // }
+      if (respose["err"] == false && response.statusCode == 200) {
+        return 'getCardPool success';
+      } else {
+        throw Exception(respose["err_msg"] ?? "Unknown error");
+      }
+    } catch (e) {
+      log('Error fetching card pool data: $e');
+      rethrow;
+    }
+  }
+
+  // 十抽
+  Future<String> gachaTenTimes({
+    required String cardPoolID,
+    required String characterID,
+  }) async {
+    Uri hostUrl = Uri.http(_host, '/api/v1/gacha_ten_times');
+    try {
+      http.Response response = await http.post(
+        hostUrl,
+        body: {
+          "card_pool_id": cardPoolID,
+          "character_id": characterID,
+        },
+      );
+
+      // 将响应解码为 Map
+      Map<String, dynamic> respose = jsonDecode(response.body);
+
+      log('getCardPool response = ${response.body}');
+
+      if (respose["err"] == false && response.statusCode == 200) {
+        return 'getCardPool success';
+      } else {
+        throw Exception(respose["err_msg"] ?? "Unknown error");
+      }
+    } catch (e) {
+      log('Error fetching card pool data: $e');
+      rethrow;
+    }
+  }
+
+  // 儲值
+  Future<String> topUp({
+    required String characterID,
+    required String topUpGem,
+  }) async {
+    Uri hostUrl = Uri.http(_host, '/api/v1/top_up');
+    try {
+      http.Response response = await http.post(
+        hostUrl,
+        body: {
+          "access_token": _accessToken,
+          "character_id": characterID,
+          "top_up_gem": topUpGem,
+        },
+      );
+
+      // 将响应解码为 Map
+      Map<String, dynamic> respose = jsonDecode(response.body);
+
+      log('topUp response = ${response.body}');
+
+      if (respose["err"] == false && response.statusCode == 200) {
+        return 'topUp success';
+      } else {
+        throw Exception(respose["err_msg"] ?? "Unknown error");
+      }
+    } catch (e) {
+      log('Error : $e');
+      return 'topUp fail';
+    }
+  }
 }
 
 //裝置資料

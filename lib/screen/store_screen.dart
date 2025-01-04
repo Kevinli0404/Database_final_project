@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:database_final_project/provider/api.dart';
 
 class StoreScreen extends StatefulWidget {
   const StoreScreen({super.key});
@@ -127,86 +130,157 @@ class _StoreScreenState extends State<StoreScreen> {
   }
 
   void _showItemDetail(BuildContext context, StoreItem item) {
+    final TextEditingController cardNumberController = TextEditingController();
+    final TextEditingController expiryDateController = TextEditingController();
+    final TextEditingController cvvController = TextEditingController();
+
+    void disposeControllers() {
+      cardNumberController.dispose();
+      expiryDateController.dispose();
+      cvvController.dispose();
+    }
+
+    bool areFieldsEmpty() {
+      return cardNumberController.text.isEmpty ||
+          expiryDateController.text.isEmpty ||
+          cvvController.text.isEmpty;
+    }
+
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          title: Text(
-            '購買確認',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue[800],
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '創世結晶 x ${item.ticket}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '創世結晶 x ${item.ticket}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 50, // 限制圖片高度
+                      width: 50, // 限制圖片寬度
+                      child: Image.asset(
+                        item.image,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '價格: NT\$${item.twd}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 10),
+                    // 添加三個輸入框
+                    TextField(
+                      controller: cardNumberController,
+                      decoration: const InputDecoration(
+                        labelText: '輸入信用卡卡號',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: expiryDateController,
+                      decoration: const InputDecoration(
+                        labelText: '輸入到期日期',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: cvvController,
+                      decoration: const InputDecoration(
+                        labelText: '輸入後三碼',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 20),
+                    // 按钮作为 Column 的一部分
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            disposeControllers();
+                          },
+                          child: const Text(
+                            "取消",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                areFieldsEmpty() ? Colors.grey : Colors.blue,
+                          ),
+                          onPressed: areFieldsEmpty()
+                              ? null
+                              : () async {
+                                  final serverAPI = Provider.of<ServerAPI>(
+                                      context,
+                                      listen: false);
+                                  log('item.ticket : ${item.ticket}');
+                                  log('item.ticket : ${item.ticket}');
+                                  final String topUpResult =
+                                      await serverAPI.topUp(
+                                    characterID: serverAPI
+                                        .characterData!.characterId
+                                        .toString(),
+                                    topUpGem: item.ticket,
+                                  );
+
+                                  if (topUpResult == 'topUp success') {
+                                    await serverAPI.getUserCharacter();
+                                    Navigator.pop(context);
+                                    disposeControllers();
+                                    Fluttertoast.showToast(
+                                      msg: "購買成功",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.black,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0,
+                                    );
+                                  } else {
+                                    Navigator.pop(context);
+                                    disposeControllers();
+                                    Fluttertoast.showToast(
+                                      msg: "購買失敗",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0,
+                                    );
+                                  }
+                                },
+                          child: const Text("確認"),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 50, // 限制圖片高度
-                width: 50, // 限制圖片寬度
-                child: Image.asset(
-                  item.image,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                '價格: NT\$${item.twd}',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14),
-              ),
-            ],
-          ),
-          actions: [
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center, // 將按鈕置中
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      "取消",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                  const SizedBox(width: 16), // 添加按鈕間距
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Fluttertoast.showToast(
-                        msg: "購買成功",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        backgroundColor: Colors.black,
-                        textColor: Colors.white,
-                        fontSize: 16.0,
-                        timeInSecForIosWeb: 1,
-                      );
-                    },
-                    child: const Text("確認"),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            );
+          },
         );
       },
     );

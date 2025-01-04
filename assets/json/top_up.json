@@ -2,50 +2,38 @@
     {
       "top_up_id": "001",
       "top_up_image": "assets/logo/gen_stone.png",
-      "TWD": "30.00",
-      "ticket": "52"
+      "TWD": "33.00",
+      "ticket": "60"
     },
     {
       "top_up_id": "002",
       "top_up_image": "assets/logo/gen_stone.png",
-      "TWD": "50.00",
-      "ticket": "88"
+      "TWD": "300.00",
+      "ticket": "170"
     },
     {
       "top_up_id": "003",
       "top_up_image": "assets/logo/gen_stone.png",
-      "TWD": "90.00",
-      "ticket": "158"
+      "TWD": "980.00",
+      "ticket": "490"
     },
     {
       "top_up_id": "004",
       "top_up_image": "assets/logo/gen_stone.png",
-      "TWD": "150.00",
-      "ticket": "264"
+      "TWD": "1980.00",
+      "ticket": "980"
     },
     {
       "top_up_id": "005",
       "top_up_image": "assets/logo/gen_stone.png",
-      "TWD": "300.00",
-      "ticket": "528"
+      "TWD": "3280.00",
+      "ticket": "1690"
     },
     {
       "top_up_id": "006",
       "top_up_image": "assets/logo/gen_stone.png",
-      "TWD": "350.00",
-      "ticket": "616"
-    },
-    {
-      "top_up_id": "007",
-      "top_up_image": "assets/logo/gen_stone.png",
-      "TWD": "400.00",
-      "ticket": "74"
-    },
-    {
-      "top_up_id": "008",
-      "top_up_image": "assets/logo/gen_stone.png",
-      "TWD": "450.00",
-      "ticket": "792"
+      "TWD": "6480.00",
+      "ticket": "3290"
     }
   ]
   
