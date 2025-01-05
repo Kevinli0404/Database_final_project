@@ -25,7 +25,7 @@ class CardPoolData {
       lowRarityProbability: json['low_rarity_probability'],
       mediumRarityProbability: json['medium_rarity_probability'],
       HighRarityProbability: json['high_rarity_probability'],
-      cardImage: "assets/character_pictures/11.png",
+      cardImage: json['card_picture_path'],
     );
   }
 

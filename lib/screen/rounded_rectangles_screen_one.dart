@@ -73,7 +73,7 @@ class _RoundedRectanglesScreenOneState extends State<RoundedRectanglesScreenOne>
 
   // 構建單張卡片
   Widget buildCard(Map<String, dynamic> card) {
-    final int rarity = int.parse(card['rarity']);
+    final int rarity = int.parse(card['rarity'])+2;
 
     return AnimatedBuilder(
       animation: _controller,

@@ -166,7 +166,7 @@ class _BackpackScreenState extends State<BackpackScreen> {
 
   int _getStarCount(String rarity) {
     try {
-      return int.parse(rarity);
+      return int.parse(rarity)+2;
     } catch (e) {
       return 0;
     }

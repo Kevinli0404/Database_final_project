@@ -291,7 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                   const SizedBox(width: 2),
                                                   const Text(
-                                                    'x 10',
+                                                    'x 160',
                                                     style: TextStyle(
                                                       color: Color(0xFF8D6E63),
                                                       fontSize: 12,
@@ -398,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                   const SizedBox(width: 2),
                                                   const Text(
-                                                    'x 100',
+                                                    'x 1600',
                                                     style: TextStyle(
                                                       color: Color(0xFF8D6E63),
                                                       fontSize: 12,

@@ -14,7 +14,7 @@ import 'package:database_final_project/class_data/card_pool_data.dart';
 
 // class ServerAPI
 class ServerAPI with ChangeNotifier {
-  String _hostIP = '192.168.55.151';
+  String _hostIP = '192.168.2.203';
   String _host = '';
   final String _port = '5000';
   String _accessToken = '';

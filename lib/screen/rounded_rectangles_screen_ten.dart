@@ -85,7 +85,7 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
   }
 
   Widget buildCard(Map<String, dynamic> card) {
-    final int rarity = int.parse(card['gacha_result']['rarity']);
+    final int rarity = int.parse(card['gacha_result']['rarity'])+2;
 
     return GestureDetector(
       onTap: () {
