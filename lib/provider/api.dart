@@ -14,7 +14,7 @@ import 'package:database_final_project/class_data/card_pool_data.dart';
 
 // class ServerAPI
 class ServerAPI with ChangeNotifier {
-  String _hostIP = '192.168.0.185';
+  String _hostIP = '192.168.55.151';
   String _host = '';
   final String _port = '5000';
   String _accessToken = '';
@@ -294,7 +294,7 @@ class ServerAPI with ChangeNotifier {
                   "card_id": item['card_id'].toString(),
                   "card_name": item['card_name'],
                   "rarity": item['rarity'].toString(),
-                  "card_image": "assets/character_pictures/14.png",
+                  "card_image": item['card_picture_path'].toString(),
                   "card_description": "No description available.",
                   "skill_cost": item['skill_cost']?.toString(),
                   "skill_damage": item['skill_damage']?.toString(),
@@ -366,11 +366,19 @@ class ServerAPI with ChangeNotifier {
 
       if (respose["err"] == false && response.statusCode == 200) {
         // 將 gacha_result 格式化為 ObtainCard 的格式
+        // final ObtainCard obtainedCard = ObtainCard(
+        //   cardId: respose['gacha_result']['card_id'].toString(),
+        //   cardImage: respose['gacha_result']['card_picture_path'],
+        //   cardName: respose['gacha_result']['card_name'],
+        //   rarity: respose['gacha_result']['rarity'].toString(),
+        //   cardDescription: 'No description available',
+        // );
         final ObtainCard obtainedCard = ObtainCard(
-          cardId: respose['gacha_result']['card_id'].toString(),
-          cardImage: "assets/character_pictures/12.png",
-          cardName: respose['gacha_result']['card_name'],
-          rarity: respose['gacha_result']['rarity'].toString(),
+          cardId: (respose['gacha_result']['card_id'] ?? '').toString(),
+          cardImage: respose['gacha_result']['card_picture_path'] ??
+              'assets/character_pictures/15.png',
+          cardName: respose['gacha_result']['card_name'] ?? 'Unknown Card',
+          rarity: (respose['gacha_result']['rarity'] ?? '').toString(),
           cardDescription: 'No description available',
         );
 
@@ -434,7 +442,7 @@ class ServerAPI with ChangeNotifier {
                   "card_name": item['card_name'],
                   "rarity": item['rarity'].toString(),
                   // 固定圖片
-                  "cardImage": "assets/character_pictures/13.png",
+                  "cardImage": item['card_picture_path'].toString(),
                   "card_description": "No description available.",
                 }))
             .toList();

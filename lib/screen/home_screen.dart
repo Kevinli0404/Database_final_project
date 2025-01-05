@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 width: 10,
                                               ),
                                               Text(
-                                                '${(cardPool[selectedIndex].fakeHighRarityProbability * 100).toStringAsFixed(2)}%', // 格式化為兩位小數，並加上 %
+                                                '${(cardPool[selectedIndex].HighRarityProbability * 100).toStringAsFixed(2)}%', // 格式化為兩位小數，並加上 %
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 20,

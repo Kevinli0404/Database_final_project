@@ -103,13 +103,83 @@ class CharacterPage extends StatelessWidget {
     }
   }
 
+  // void _showAddCharacterDialog(BuildContext context) {
+  //   Fluttertoast.showToast(
+  //     msg: "showAddCharacterDialog",
+  //     toastLength: Toast.LENGTH_SHORT,
+  //     gravity: ToastGravity.CENTER,
+  //     backgroundColor: Colors.blue,
+  //     textColor: Colors.white,
+  //   );
+  // }
   void _showAddCharacterDialog(BuildContext context) {
-    Fluttertoast.showToast(
-      msg: "",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      backgroundColor: Colors.blue,
-      textColor: Colors.white,
+    final TextEditingController characterNameController =
+        TextEditingController();
+    final serverAPI = Provider.of<ServerAPI>(context, listen: false);
+
+    showDialog(
+      context: context,
+      barrierDismissible: true, // 點擊對話框外部可關閉
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text("添加角色"),
+          content: TextField(
+            controller: characterNameController,
+            decoration: const InputDecoration(
+              labelText: "角色名稱",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // 關閉對話框
+              },
+              child: const Text("取消"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final characterName = characterNameController.text.trim();
+                if (characterName.isEmpty) {
+                  Fluttertoast.showToast(
+                    msg: "角色名稱不能為空",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                  );
+                  return;
+                }
+
+                try {
+                  await serverAPI.registerUser(characterName);
+                  await serverAPI.getUserCharacter(); // 更新角色列表
+                  Navigator.of(context).pop(); // 關閉對話框
+                  Fluttertoast.showToast(
+                    msg: "角色添加成功",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                  );
+                } catch (e) {
+                  Fluttertoast.showToast(
+                    msg: "角色添加失敗: $e",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                  );
+                }
+              },
+              child: const Text("確認"),
+            ),
+          ],
+        );
+      },
     );
   }
 

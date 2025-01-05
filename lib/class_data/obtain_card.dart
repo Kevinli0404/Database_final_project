@@ -19,13 +19,26 @@ class ObtainCard {
     this.skillName,
   });
 
+  // factory ObtainCard.fromJson(Map<String, dynamic> json) {
+  //   return ObtainCard(
+  //     cardId: json['card_id']?.toString() ?? '',
+  //     cardName: json['card_name'] ?? '',
+  //     rarity: json['rarity']?.toString() ?? '',
+  //     cardImage: json['card_image'] ?? 'assets/character_pictures/15.png',
+  //     cardDescription: json['card_description'] ?? 'No description available.',
+  //     skillCost: json['skill_cost']?.toString(),
+  //     skillDamage: json['skill_damage']?.toString(),
+  //     skillName: json['skill_name'],
+  //   );
+  // }
   factory ObtainCard.fromJson(Map<String, dynamic> json) {
     return ObtainCard(
       cardId: json['card_id']?.toString() ?? '',
-      cardName: json['card_name'] ?? '',
+      cardName: json['card_name'] ?? 'Unknown Card',
       rarity: json['rarity']?.toString() ?? '',
-      cardImage: json['card_image'] ?? 'assets/character_pictures/15.png',
-      cardDescription: json['card_description'] ?? 'No description available.',
+      cardImage:
+          json['card_picture_path'] ?? 'assets/character_pictures/15.png',
+      cardDescription: json['card_description'] ?? 'No description available',
       skillCost: json['skill_cost']?.toString(),
       skillDamage: json['skill_damage']?.toString(),
       skillName: json['skill_name'],
