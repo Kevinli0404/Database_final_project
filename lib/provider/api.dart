@@ -11,17 +11,21 @@ import 'package:database_final_project/class_data/user_character.dart';
 import 'package:database_final_project/class_data/obtain_card.dart';
 import 'package:database_final_project/class_data/card_pool_data.dart';
 
-// class ServerAPI
 class ServerAPI with ChangeNotifier {
   String _hostIP = '192.168.55.151';
   String _host = '';
   final String _port = '6000';
   String _accessToken = '';
-  int? _userId; // 用戶 ID
-  List<UserCharacter> _userCharacters = []; // 角色列表
-  CharacterData? _characterData; // 用於存儲角色詳細資料
-  List<ObtainCard> _backpackCards = []; // 用於儲存背包數據
-  List<CardPoolData> _cardPool = []; // 儲存 CardPool 數據
+  // 用戶 ID
+  int? _userId;
+  // 角色列表
+  List<UserCharacter> _userCharacters = [];
+  // 用於存儲角色詳細資料
+  CharacterData? _characterData;
+  // 用於儲存背包數據
+  List<ObtainCard> _backpackCards = [];
+  // 儲存 CardPool 數據
+  List<CardPoolData> _cardPool = [];
 
   List<ObtainCard> _gachaTenTimesResults = [];
 
@@ -35,10 +39,10 @@ class ServerAPI with ChangeNotifier {
   int? get userId => _userId;
   CharacterData? get characterData => _characterData;
 
+  // 提供只讀訪問
   List<UserCharacter> get userCharacters => List.unmodifiable(_userCharacters);
   List<ObtainCard> get backpackCards => List.unmodifiable(_backpackCards);
   List<CardPoolData> get cardPool => List.unmodifiable(_cardPool);
-  // 提供只讀訪問
 
   bool get isLogin => _accessToken.isNotEmpty;
 
@@ -444,7 +448,6 @@ class ServerAPI with ChangeNotifier {
         },
       );
 
-      // 将响应解码为 Map
       Map<String, dynamic> respose = jsonDecode(response.body);
 
       log('topUp response = ${response.body}');

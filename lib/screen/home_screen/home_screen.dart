@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:database_final_project/provider/api.dart';
 import 'package:database_final_project/provider/shared_state.dart';
+import 'package:database_final_project/screen/home_screen/utils/show_profile_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -68,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    _showProfileDialog(context);
+                                    showProfileDialog(context);
                                   },
                                   child: CircleAvatar(
                                     radius: 20,
@@ -605,141 +606,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
         ],
-      ),
-    );
-  }
-
-  void _showProfileDialog(BuildContext context) {
-    final serverAPI = Provider.of<ServerAPI>(context, listen: false);
-
-    // 獲取角色數據
-    final characterData = serverAPI.characterData;
-
-    showDialog(
-      context: context,
-      barrierDismissible: true, // 點擊外部關閉對話框
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF8D6E63), // 外層深棕色
-              borderRadius: BorderRadius.circular(20),
-            ),
-            padding: const EdgeInsets.all(4), // 深棕色邊框的厚度
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.amber.shade50, // 內層淺棕色
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SizedBox(
-                  width: 350,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min, // 佔用所需高度
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Center(
-                        child: Text(
-                          "冒險者日誌",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      characterData == null
-                          ? const Center(
-                              child: Text("無角色數據"),
-                            )
-                          : Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 100, // 左列寬度
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          _buildLabel("角色名"),
-                                          _buildLabel("VIP等級"),
-                                          _buildLabel("創建時間"),
-                                          _buildLabel("寶石數量"),
-                                          _buildLabel("首充狀態"),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 250, // 右列寬度
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          _buildValue(
-                                              characterData.characterName),
-                                          _buildValue(
-                                            characterData.vipLevel.toString(),
-                                            color: const Color(
-                                                0xFFFFD700), // 設置為金色
-                                          ),
-                                          _buildValue(characterData.createTime),
-                                          _buildValue(
-                                              characterData.gem.toString()),
-                                          _buildValue(
-                                            characterData.topUpState == 1
-                                                ? "已完成"
-                                                : "未完成",
-                                            color: characterData.topUpState == 1
-                                                ? Colors.black
-                                                : Colors.red, // 設置紅色
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  // 創建標籤方法
-  Widget _buildLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Text(
-        "$text：",
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
-      ),
-    );
-  }
-
-  // 創建值方法，支持可選顏色
-  Widget _buildValue(String text, {Color color = Colors.black}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 14,
-          color: color,
-        ),
       ),
     );
   }

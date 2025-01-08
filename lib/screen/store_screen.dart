@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:database_final_project/provider/api.dart';
+import 'package:database_final_project/class_data/store_item.dart';
 import 'package:database_final_project/provider/shared_state.dart';
 
 class StoreScreen extends StatefulWidget {
@@ -87,7 +88,7 @@ class _StoreScreenState extends State<StoreScreen> {
                     final item = items[index];
                     return GestureDetector(
                       onTap: () {
-                        _showItemDetail(context, item);
+                        showItemDetail(context, item);
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -196,7 +197,7 @@ class _StoreScreenState extends State<StoreScreen> {
     );
   }
 
-  void _showItemDetail(BuildContext context, StoreItem item) {
+  void showItemDetail(BuildContext context, StoreItem item) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -305,29 +306,6 @@ class _StoreScreenState extends State<StoreScreen> {
           ),
         );
       },
-    );
-  }
-}
-
-class StoreItem {
-  final String id;
-  final String image;
-  final String twd;
-  final String ticket;
-
-  StoreItem({
-    required this.id,
-    required this.image,
-    required this.twd,
-    required this.ticket,
-  });
-
-  factory StoreItem.fromJson(Map<String, dynamic> json) {
-    return StoreItem(
-      id: json['top_up_id'],
-      image: json['top_up_image'],
-      twd: json['TWD'],
-      ticket: json['ticket'],
     );
   }
 }

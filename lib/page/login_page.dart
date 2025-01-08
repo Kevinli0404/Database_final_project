@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:database_final_project/page/character_page.dart';
+import 'package:database_final_project/page/character_page/character_page.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:database_final_project/provider/api.dart';
 import 'package:provider/provider.dart';
@@ -132,6 +132,9 @@ class _LoginPageState extends State<LoginPage> {
                     try {
                       final resultLogin =
                           await serverAPI.loginIn(email, password);
+
+                      if (!mounted) return;
+
                       log('resultLogin = $resultLogin');
 
                       if (resultLogin == 'login success') {

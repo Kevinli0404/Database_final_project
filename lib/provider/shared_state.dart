@@ -9,12 +9,6 @@ class SharedState with ChangeNotifier {
   bool get buttonsDrawed => _buttonsDrawed;
   int get currentIndex => _currentIndex;
   bool get buttonsDisabled => _buttonsDisabled;
-
-  // void toggleDrawed() {
-  //   _isDrawed = !_isDrawed;
-  //   notifyListeners();
-  // }
-
   void toggleDrawed(bool value) {
     _buttonsDrawed = value;
     notifyListeners();
