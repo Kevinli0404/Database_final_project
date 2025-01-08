@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:database_final_project/class_data/character_data.dart';
@@ -14,17 +13,20 @@ import 'package:database_final_project/class_data/card_pool_data.dart';
 
 // class ServerAPI
 class ServerAPI with ChangeNotifier {
-  String _hostIP = '192.168.2.203';
+  String _hostIP = '192.168.55.151';
   String _host = '';
-  final String _port = '5000';
+  final String _port = '6000';
   String _accessToken = '';
   int? _userId; // 用戶 ID
   List<UserCharacter> _userCharacters = []; // 角色列表
   CharacterData? _characterData; // 用於存儲角色詳細資料
   List<ObtainCard> _backpackCards = []; // 用於儲存背包數據
   List<CardPoolData> _cardPool = []; // 儲存 CardPool 數據
-  final List<Map<String, dynamic>> _gachaResults = [];
-  final List<Map<String, dynamic>> _gachaTenTimesResults = [];
+
+  List<ObtainCard> _gachaTenTimesResults = [];
+
+  List<ObtainCard> get gachaTenTimesResults =>
+      List.unmodifiable(_gachaTenTimesResults);
 
   String get host => _host;
   String get hostIP => _hostIP;
@@ -37,10 +39,6 @@ class ServerAPI with ChangeNotifier {
   List<ObtainCard> get backpackCards => List.unmodifiable(_backpackCards);
   List<CardPoolData> get cardPool => List.unmodifiable(_cardPool);
   // 提供只讀訪問
-  List<Map<String, dynamic>> get gachaResults =>
-      List.unmodifiable(_gachaResults);
-  List<Map<String, dynamic>> get gachaTenTimesResults =>
-      List.unmodifiable(_gachaTenTimesResults);
 
   bool get isLogin => _accessToken.isNotEmpty;
 
@@ -61,9 +59,7 @@ class ServerAPI with ChangeNotifier {
   }
 
   void setUserCharacters(List<UserCharacter> characters) {
-    // 限制最多只有 3 个角色
-    _userCharacters =
-        characters.length > 3 ? characters.sublist(0, 3) : characters;
+    _userCharacters = characters;
     notifyListeners();
   }
 
@@ -284,22 +280,14 @@ class ServerAPI with ChangeNotifier {
           "character_id": characterID,
         },
       );
-      Map<String, dynamic> respose = jsonDecode(response.body);
 
+      Map<String, dynamic> respose = jsonDecode(response.body);
       log('getCharacterBackpack response = ${response.body}');
 
       if (respose["err"] == false && response.statusCode == 200) {
+        _backpackCards.clear();
         _backpackCards = (respose['obtain_card'] as List)
-            .map((item) => ObtainCard.fromJson({
-                  "card_id": item['card_id'].toString(),
-                  "card_name": item['card_name'],
-                  "rarity": item['rarity'].toString(),
-                  "card_image": item['card_picture_path'].toString(),
-                  "card_description": "No description available.",
-                  "skill_cost": item['skill_cost']?.toString(),
-                  "skill_damage": item['skill_damage']?.toString(),
-                  "skill_name": item['skill_name'],
-                }))
+            .map((item) => ObtainCard.fromJson(item))
             .toList();
 
         notifyListeners(); // 通知 UI 数据已更新
@@ -329,6 +317,7 @@ class ServerAPI with ChangeNotifier {
       log('getCardPool response = ${response.body}');
 
       if (respose["err"] == false && response.statusCode == 200) {
+        _cardPool.clear();
         _cardPool = (respose['card_pool'] as List)
             .map((item) => CardPoolData.fromJson(item))
             .toList();
@@ -344,7 +333,14 @@ class ServerAPI with ChangeNotifier {
     }
   }
 
+  // 清空 gachaTenTimes 的结果
+  void cleargetCardPoolResults() {
+    _cardPool.clear();
+    notifyListeners();
+  }
+
   //單抽
+  // 單抽
   Future<String> gachaOnce({
     required String cardPoolID,
     required String characterID,
@@ -365,30 +361,17 @@ class ServerAPI with ChangeNotifier {
       log('gachaOnce response = ${response.body}');
 
       if (respose["err"] == false && response.statusCode == 200) {
-        // 將 gacha_result 格式化為 ObtainCard 的格式
-        // final ObtainCard obtainedCard = ObtainCard(
-        //   cardId: respose['gacha_result']['card_id'].toString(),
-        //   cardImage: respose['gacha_result']['card_picture_path'],
-        //   cardName: respose['gacha_result']['card_name'],
-        //   rarity: respose['gacha_result']['rarity'].toString(),
-        //   cardDescription: 'No description available',
-        // );
-        final ObtainCard obtainedCard = ObtainCard(
-          cardId: (respose['gacha_result']['card_id'] ?? '').toString(),
-          cardImage: respose['gacha_result']['card_picture_path'] ??
-              'assets/character_pictures/15.png',
-          cardName: respose['gacha_result']['card_name'] ?? 'Unknown Card',
-          rarity: (respose['gacha_result']['rarity'] ?? '').toString(),
-          cardDescription: 'No description available',
-        );
+        // 清空 _gachaTenTimesResults，準備存儲新結果
+        _gachaTenTimesResults.clear();
 
-        _gachaResults.add({
-          'gacha_result': obtainedCard.toJson(),
-          'grantee': respose['grantee'],
-          'grantee_state': respose['grantee_state'],
-        });
+        final Map<String, dynamic> gachaResult = respose['gacha_result'];
+        ObtainCard obtainedCard = ObtainCard.fromJson(gachaResult);
+        log('Decoded gacha_result: ${respose['gacha_result']}');
+
+        // 將單抽結果存入 _gachaTenTimesResults
+        _gachaTenTimesResults.add(obtainedCard);
+
         notifyListeners();
-
         return 'gachaOnce success';
       } else {
         throw Exception(respose["err_msg"] ?? "Unknown error");
@@ -397,18 +380,6 @@ class ServerAPI with ChangeNotifier {
       log('Error in gachaOnce: $e');
       return 'gachaOnce fail';
     }
-  }
-
-  // 清空 gacha 結果
-  void clearGachaResults() {
-    _gachaResults.clear();
-    notifyListeners();
-  }
-
-  // 清空 gachaTenTimes 的结果
-  void clearGachaTenTimesResults() {
-    _gachaTenTimesResults.clear();
-    notifyListeners();
   }
 
   // 十抽方法
@@ -432,31 +403,14 @@ class ServerAPI with ChangeNotifier {
       log('gachaTenTimes response = ${response.body}');
 
       if (respose["err"] == false && response.statusCode == 200) {
-        // 清空之前的结果
+        // 清空之前的十连抽结果
         _gachaTenTimesResults.clear();
 
-        // 更新结果
-        final List<ObtainCard> obtainedCards = (respose['gacha_result'] as List)
-            .map((item) => ObtainCard.fromJson({
-                  "card_id": item['card_id'].toString(),
-                  "card_name": item['card_name'],
-                  "rarity": item['rarity'].toString(),
-                  // 固定圖片
-                  "cardImage": item['card_picture_path'].toString(),
-                  "card_description": "No description available.",
-                }))
+        // 解析抽卡结果
+        _gachaTenTimesResults = (respose['gacha_result'] as List)
+            .map((item) => ObtainCard.fromJson(item))
             .toList();
 
-        // 清空之前的十抽结果
-        _gachaTenTimesResults.clear();
-
-        _gachaTenTimesResults.addAll(obtainedCards.map((card) => {
-              'gacha_result': card.toJson(),
-              'grantee': respose['grantee'],
-              'grantee_state': respose['grantee_state'],
-            }));
-
-        // 通知监听者
         notifyListeners();
         return 'gachaTenTimes success';
       } else {
@@ -466,6 +420,12 @@ class ServerAPI with ChangeNotifier {
       log('Error in gachaTenTimes: $e');
       return 'gachaTenTimes fail';
     }
+  }
+
+  // 清空 gachaTenTimes 的结果
+  void clearGachaTenTimesResults() {
+    _gachaTenTimesResults.clear();
+    notifyListeners();
   }
 
   // 儲值
@@ -500,16 +460,3 @@ class ServerAPI with ChangeNotifier {
     }
   }
 }
-
-// //裝置資料
-// Future<String> getDeviceInfo() async {
-//   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-//   if (Platform.isAndroid) {
-//     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-//     return androidInfo.model;
-//   } else if (Platform.isIOS) {
-//     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-//     return iosInfo.name;
-//   }
-//   return 'Unknown';
-// }

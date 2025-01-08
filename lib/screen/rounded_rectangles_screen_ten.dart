@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:database_final_project/class_data/obtain_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:database_final_project/provider/api.dart';
@@ -37,15 +38,13 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
     final serverAPI = Provider.of<ServerAPI>(context);
     final sharedState = Provider.of<SharedState>(context);
 
-    final List<Map<String, dynamic>> gachaResults =
-        serverAPI.gachaTenTimesResults;
+    final List<ObtainCard> gachaResults = serverAPI.gachaTenTimesResults;
 
     return Scaffold(
       body: GestureDetector(
         onTap: () async {
           serverAPI.clearGachaTenTimesResults();
-          // 點擊背景時改變狀態並切換頁面
-          sharedState.toggleDrawed();
+          sharedState.toggleDrawed(true);
           sharedState.updateCurrentIndex(0);
         },
         child: Container(
@@ -58,38 +57,38 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
           child: Center(
             child: gachaResults.isEmpty
                 ? const CircularProgressIndicator()
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
+                : (gachaResults.length == 10
+                    ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: gachaResults
-                            .sublist(0, 5)
-                            .map((card) => buildCard(card))
-                            .toList(),
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: gachaResults
-                            .sublist(5, 10)
-                            .map((card) => buildCard(card))
-                            .toList(),
-                      ),
-                    ],
-                  ),
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                                5, (index) => buildCard(gachaResults[index])),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(5,
+                                (index) => buildCard(gachaResults[index + 5])),
+                          ),
+                        ],
+                      )
+                    : Center(
+                        child: buildCardLarge(gachaResults[0]),
+                      )),
           ),
         ),
       ),
     );
   }
 
-  Widget buildCard(Map<String, dynamic> card) {
-    final int rarity = int.parse(card['gacha_result']['rarity'])+2;
+  Widget buildCard(ObtainCard card) {
+    final int rarity = int.parse(card.rarity) + 2;
 
     return GestureDetector(
       onTap: () {
-        _showCardDetail(context, card['gacha_result']);
+        _showCardDetail(context, card);
       },
       child: AnimatedBuilder(
         animation: _controller,
@@ -131,10 +130,8 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Image.asset(
-                card['gacha_result']['card_image'],
+                card.cardImage,
                 fit: BoxFit.contain,
-                width: double.infinity,
-                height: double.infinity,
               ),
             ),
           );
@@ -143,12 +140,70 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
     );
   }
 
-  void _showCardDetail(BuildContext context, Map<String, dynamic> card) {
+  // 單抽時顯示放大的卡片
+  Widget buildCardLarge(ObtainCard card) {
+    final int rarity = int.parse(card.rarity) + 2;
+
+    return GestureDetector(
+      onTap: () {
+        _showCardDetail(context, card);
+      },
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final gradient = LinearGradient(
+            colors: [
+              Colors.yellowAccent,
+              Colors.orangeAccent,
+              Colors.yellowAccent.withOpacity(0.5),
+            ],
+            stops: [
+              0.0,
+              (_controller.value + 0.5) % 1.0,
+              1.0,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          );
+
+          return Container(
+            margin: const EdgeInsets.all(16.0),
+            width: 200,
+            height: 230,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: rarity == 5 ? gradient : null,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+              border: Border.all(
+                color: rarity == 5 ? Colors.yellowAccent : Colors.transparent,
+                width: rarity == 5 ? 3 : 0,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(
+                card.cardImage,
+                fit: BoxFit.contain,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showCardDetail(BuildContext context, ObtainCard card) {
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        final int rarity = int.parse(card['rarity']);
+        final int rarity = int.parse(card.rarity) + 2;
         return AlertDialog(
           backgroundColor: const Color(0xFFFFF8E1),
           shape: RoundedRectangleBorder(
@@ -161,7 +216,7 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    card['card_name'],
+                    card.cardName,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -181,14 +236,14 @@ class _RoundedRectanglesScreenTenState extends State<RoundedRectanglesScreenTen>
               ),
               const SizedBox(height: 10),
               Image.asset(
-                card['card_image'],
+                card.cardImage,
                 height: 150,
                 width: 150,
                 fit: BoxFit.contain,
               ),
               const SizedBox(height: 10),
               Text(
-                card['card_description'],
+                card.cardDescription,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,

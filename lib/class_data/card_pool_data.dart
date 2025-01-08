@@ -4,7 +4,7 @@ class CardPoolData {
   final int cardPoolId;
   final double lowRarityProbability;
   final double mediumRarityProbability;
-  final double HighRarityProbability;
+  final double highRarityProbability;
   final String cardImage;
 
   CardPoolData({
@@ -13,7 +13,7 @@ class CardPoolData {
     required this.cardPoolId,
     required this.lowRarityProbability,
     required this.mediumRarityProbability,
-    required this.HighRarityProbability,
+    required this.highRarityProbability,
     required this.cardImage,
   });
 
@@ -24,7 +24,7 @@ class CardPoolData {
       cardPoolId: json['card_pool_id'],
       lowRarityProbability: json['low_rarity_probability'],
       mediumRarityProbability: json['medium_rarity_probability'],
-      HighRarityProbability: json['high_rarity_probability'],
+      highRarityProbability: json['high_rarity_probability'],
       cardImage: json['card_picture_path'],
     );
   }
@@ -36,7 +36,7 @@ class CardPoolData {
       'card_pool_id': cardPoolId,
       'low_rarity_probability': lowRarityProbability,
       'medium_rarity_probability': mediumRarityProbability,
-      'real_high_rarity_probability': HighRarityProbability,
+      'real_high_rarity_probability': highRarityProbability,
       'card_image': cardImage,
     };
   }

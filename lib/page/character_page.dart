@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +7,37 @@ import 'package:database_final_project/provider/api.dart';
 import 'package:database_final_project/page/home_page.dart';
 import 'package:database_final_project/class_data/user_character.dart';
 
-class CharacterPage extends StatelessWidget {
+class CharacterPage extends StatefulWidget {
   const CharacterPage({super.key});
+
+  @override
+  State<CharacterPage> createState() => _CharacterPageState();
+}
+
+class _CharacterPageState extends State<CharacterPage> {
+  bool isLoading = false; // 控制全螢幕遮罩
+  int _loadingIndex = 0; // 當前文字動畫索引
+  late final Timer _loadingTimer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 啟動文字動畫的 Timer
+    _loadingTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (isLoading) {
+        setState(() {
+          _loadingIndex = (_loadingIndex + 1) % 16; // 循環文字動畫索引
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _loadingTimer.cancel(); // 停止 Timer
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,23 +61,26 @@ class CharacterPage extends StatelessWidget {
           Center(
             child: Consumer<ServerAPI>(
               builder: (context, serverAPI, child) {
-                final characters = serverAPI.userCharacters;
+                final characters = serverAPI.userCharacters.toList();
+                final displayedCharacters = characters.length > 3
+                    ? characters.sublist(0, 3)
+                    : characters;
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
                     3,
                     (index) {
-                      if (index < characters.length) {
+                      if (index < displayedCharacters.length) {
                         return GestureDetector(
                           onTap: () async {
                             await _handleCharacterTap(
-                                context, serverAPI, characters[index]);
+                                context, serverAPI, displayedCharacters[index]);
                           },
                           child: _buildCharacterBox(
-                            characters[index].characterName,
+                            displayedCharacters[index].characterName,
                           ),
                         );
-                      } else if (index == characters.length) {
+                      } else if (index == displayedCharacters.length) {
                         return GestureDetector(
                           onTap: () {
                             _showAddCharacterDialog(context);
@@ -67,6 +99,83 @@ class CharacterPage extends StatelessWidget {
               },
             ),
           ),
+          if (isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (int i = 0; i < 16; i++)
+                        Stack(
+                          children: [
+                            // 外邊框層
+                            AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 300),
+                              style: TextStyle(
+                                fontSize: _loadingIndex == i ? 40 : 30,
+                                fontWeight: FontWeight.bold,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 2
+                                  ..color = Colors.blue,
+                                letterSpacing: 5,
+                              ),
+                              child: Text([
+                                '我',
+                                '最',
+                                '喜',
+                                '歡',
+                                '玩',
+                                '原',
+                                '神',
+                                '了',
+                                '!',
+                                '我',
+                                '是',
+                                '可',
+                                '莉',
+                                '玩',
+                                '家',
+                                '!'
+                              ][i]),
+                            ),
+                            // 白色填充層
+                            AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 300),
+                              style: TextStyle(
+                                fontSize: _loadingIndex == i ? 40 : 30,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 5,
+                              ),
+                              child: Text([
+                                '我',
+                                '最',
+                                '喜',
+                                '歡',
+                                '玩',
+                                '原',
+                                '神',
+                                '了',
+                                '!',
+                                '我',
+                                '是',
+                                '可',
+                                '莉',
+                                '玩',
+                                '家',
+                                '!'
+                              ][i]),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -74,27 +183,34 @@ class CharacterPage extends StatelessWidget {
 
   Future<void> _handleCharacterTap(BuildContext context, ServerAPI serverAPI,
       UserCharacter character) async {
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       final getCharacterListResult =
           await serverAPI.getCharacterList(character.characterId.toString());
-      final getCardPoolResult = await serverAPI.getCardPool();
-      if (getCharacterListResult == 'getCharacterList success' &&
-          getCardPoolResult == 'getCardPool success') {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: "加载角色失败：$getCharacterListResult",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+      if (getCharacterListResult == 'getCharacterList success') {
+        final getCardPoolResult = await serverAPI.getCardPool();
+        if (getCardPoolResult == 'getCardPool success') {
+          final String getCharacterBackpackResult = await serverAPI
+              .getCharacterBackpack(character.characterId.toString());
+          if (getCharacterBackpackResult == 'getCharacterBackpack success') {
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          }
+        }
       }
     } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       Fluttertoast.showToast(
-        msg: "加载角色失败：$e",
+        msg: "加載角色失敗：$e",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         backgroundColor: Colors.red,
@@ -103,15 +219,6 @@ class CharacterPage extends StatelessWidget {
     }
   }
 
-  // void _showAddCharacterDialog(BuildContext context) {
-  //   Fluttertoast.showToast(
-  //     msg: "showAddCharacterDialog",
-  //     toastLength: Toast.LENGTH_SHORT,
-  //     gravity: ToastGravity.CENTER,
-  //     backgroundColor: Colors.blue,
-  //     textColor: Colors.white,
-  //   );
-  // }
   void _showAddCharacterDialog(BuildContext context) {
     final TextEditingController characterNameController =
         TextEditingController();
@@ -119,18 +226,24 @@ class CharacterPage extends StatelessWidget {
 
     showDialog(
       context: context,
-      barrierDismissible: true, // 點擊對話框外部可關閉
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text("添加角色"),
-          content: TextField(
-            controller: characterNameController,
-            decoration: const InputDecoration(
-              labelText: "角色名稱",
-              border: OutlineInputBorder(),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: characterNameController,
+                  decoration: const InputDecoration(
+                    labelText: "角色名稱",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
             ),
           ),
           actions: [
@@ -155,9 +268,22 @@ class CharacterPage extends StatelessWidget {
                 }
 
                 try {
+                  // 關閉對話框
+                  Navigator.of(context).pop();
+
+                  setState(() {
+                    isLoading = true;
+                  });
+                  // 註冊角色
                   await serverAPI.registerUser(characterName);
-                  await serverAPI.getUserCharacter(); // 更新角色列表
-                  Navigator.of(context).pop(); // 關閉對話框
+
+                  // 更新角色列表
+                  await serverAPI.getUserCharacter();
+
+                  setState(() {
+                    isLoading = false;
+                  });
+
                   Fluttertoast.showToast(
                     msg: "角色添加成功",
                     toastLength: Toast.LENGTH_SHORT,
@@ -183,7 +309,6 @@ class CharacterPage extends StatelessWidget {
     );
   }
 
-  // 建立角色框框的函式
   Widget _buildCharacterBox(String title) {
     return Container(
       width: 200,
@@ -216,7 +341,6 @@ class CharacterPage extends StatelessWidget {
     );
   }
 
-  // 建立添加角色的框框
   Widget _buildAddCharacterBox() {
     return Container(
       width: 200,

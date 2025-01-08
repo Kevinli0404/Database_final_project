@@ -5,6 +5,7 @@ import 'package:database_final_project/provider/api.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey, // 全局導航鍵
       home: const LoginPage(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
