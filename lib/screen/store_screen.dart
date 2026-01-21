@@ -26,7 +26,6 @@ class _StoreScreenState extends State<StoreScreen> {
     super.initState();
     _storeItems = loadStoreItems();
 
-    // 啟動文字動畫的 Timer
     _loadingTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (isLoading) {
         setState(() {
@@ -59,10 +58,10 @@ class _StoreScreenState extends State<StoreScreen> {
           "創世結晶商城",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.blue, // 設置主題色
+        backgroundColor: Colors.blue, 
         toolbarHeight: 40,
       ),
-      backgroundColor: const Color(0xFFF5F5F5), // 設置背景顏色
+      backgroundColor: const Color(0xFFF5F5F5), 
       body: Stack(
         children: [
           FutureBuilder<List<StoreItem>>(
