@@ -69,7 +69,6 @@ class _CharacterPageState extends State<CharacterPage> {
           Center(
             child: Consumer<ServerAPI>(
               builder: (context, serverAPI, child) {
-                //測試用 skip(int)
                 final characters = serverAPI.userCharacters.toList();
                 final displayedCharacters = characters.length > 3
                     ? characters.sublist(0, 3)
