@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigatorKey, // 全局導航鍵
+      navigatorKey: navigatorKey, 
       home: const LoginPage(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
