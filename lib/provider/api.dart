@@ -237,7 +237,7 @@ class ServerAPI with ChangeNotifier {
     }
   }
 
-  //獲得角色資料
+  //獲得角色表資料
   Future<String> getCharacterList(String characterID) async {
     Uri hostUrl = Uri.http(_host, '/api/v1/get_character_list');
     try {
