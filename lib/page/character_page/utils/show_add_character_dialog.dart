@@ -34,7 +34,7 @@ void showAddCharacterDialog({
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); // 關閉對話框
+              Navigator.of(context).pop(); 
             },
             child: const Text("取消"),
           ),
@@ -53,17 +53,17 @@ void showAddCharacterDialog({
               }
 
               try {
-                // 關閉對話框
+                
                 Navigator.of(context).pop();
 
-                onLoading(); // 開始加載狀態
+                onLoading(); 
                 // 註冊角色
                 await serverAPI.registerUser(characterName);
 
                 // 更新角色列表
                 await serverAPI.getUserCharacter();
 
-                onRegisterSuccess(); // 完成加載狀態
+                onRegisterSuccess(); 
 
                 Fluttertoast.showToast(
                   msg: "角色添加成功",
