@@ -96,7 +96,7 @@ class ServerAPI with ChangeNotifier {
     if (_host == '0.0.0.0:0') return 'host is empty';
 
     Uri hostUrl = Uri.http(
-        'bev2loadbalancer-61644974.us-east-1.elb.amazonaws.com:80',
+        'XXXXX',
         '/api/v2/auth/signup');
 
     try {
@@ -135,7 +135,7 @@ class ServerAPI with ChangeNotifier {
     if (_host == '0.0.0.0:0') return 'host is empty';
 
     Uri hostUrl = Uri.http(
-        'bev2loadbalancer-61644974.us-east-1.elb.amazonaws.com:80',
+        'XXXX',
         '/api/v2/auth/signin');
 
     try {
