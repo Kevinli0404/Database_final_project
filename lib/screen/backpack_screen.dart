@@ -64,7 +64,6 @@ class _BackpackScreenState extends State<BackpackScreen> {
                   ),
                 ),
 
-                // 右侧详细信息
                 Expanded(
                   flex: 3,
                   child: backpackCards.isEmpty
@@ -84,7 +83,6 @@ class _BackpackScreenState extends State<BackpackScreen> {
                           ),
                           child: Stack(
                             children: [
-                              // 卡片图像展示
                               Container(
                                 margin: const EdgeInsets.all(16.0),
                                 decoration: BoxDecoration(
