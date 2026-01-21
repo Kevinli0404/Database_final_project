@@ -38,7 +38,7 @@ class _StoreScreenState extends State<StoreScreen> {
 
   @override
   void dispose() {
-    _loadingTimer.cancel(); // 停止 Timer
+    _loadingTimer.cancel(); 
     super.dispose();
   }
 
