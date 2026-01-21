@@ -1,16 +1,23 @@
-# database_final_project
+# 抽卡手遊模板 - 資料庫期末專案
 
-A new Flutter project.
+**課程**：資料庫系統  
+**學期**：113-1  
+**小組/作者**：李柏毅(前端)/劉德皓(後端)  
+**專案類型**：抽卡手遊後台系統模擬（gacha game template）
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## 設計目的 
 
-A few resources to get you started if this is your first Flutter project:
+設計一款抽卡手遊模板，提供一個可靈活應用於不同主題與風格的開發框架。核心目的是讓開發者能夠通過快速替換角色設計和遊戲元素，輕鬆生成具有獨特風格的遊戲作品。
+通過模板化的設計，減少從零開始開發的時間成本，為遊戲開發者提供一個快速生成遊戲的高效工具。
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+使用者可以透過系統執行以下核心功能：
+- 帳號註冊/登入
+- 查看/抽卡（單抽、十連）
+- 檢視個人圖鑑與持有角色
+- 商城購買抽卡資源（鑽石/抽卡券）
+- 管理員後台（卡池設定、機率調整、玩家資料查詢）
+
+
+https://docs.google.com/presentation/d/13OrmxVukFVM3FfXy7Zhte6EupQ0vkI3jGZEJsOitRCk/edit?slide=id.g322df8ff84c_8_14#slide=id.g322df8ff84c_8_14
