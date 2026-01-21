@@ -12,9 +12,9 @@ import 'package:database_final_project/class_data/obtain_card.dart';
 import 'package:database_final_project/class_data/card_pool_data.dart';
 
 class ServerAPI with ChangeNotifier {
-  String _hostIP = '192.168.55.151';
+  String _hostIP = '192.168..';
   String _host = '';
-  final String _port = '6000';
+  final String _port = '....';
   String _accessToken = '';
   // 用戶 ID
   int? _userId;
