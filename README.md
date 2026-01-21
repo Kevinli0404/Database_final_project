@@ -19,5 +19,8 @@
 - 商城購買抽卡資源（鑽石/抽卡券）
 - 管理員後台（卡池設定、機率調整、玩家資料查詢）
 
-
+## 說明簡報
 https://docs.google.com/presentation/d/13OrmxVukFVM3FfXy7Zhte6EupQ0vkI3jGZEJsOitRCk/edit?slide=id.g322df8ff84c_8_14#slide=id.g322df8ff84c_8_14
+
+## DEMO
+https://youtu.be/yREaMhhGgqk
