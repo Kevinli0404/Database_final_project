@@ -196,7 +196,7 @@ class ServerAPI with ChangeNotifier {
             .map((item) => UserCharacter.fromJson(item))
             .toList();
 
-        // 调用 setUserCharacters 更新
+       
         setUserCharacters(characters);
         notifyListeners();
         log('_userCharacters = $_userCharacters');
@@ -344,7 +344,6 @@ class ServerAPI with ChangeNotifier {
   }
 
   //單抽
-  // 單抽
   Future<String> gachaOnce({
     required String cardPoolID,
     required String characterID,
@@ -407,7 +406,6 @@ class ServerAPI with ChangeNotifier {
       log('gachaTenTimes response = ${response.body}');
 
       if (respose["err"] == false && response.statusCode == 200) {
-        // 清空之前的十连抽结果
         _gachaTenTimesResults.clear();
 
         // 解析抽卡结果
